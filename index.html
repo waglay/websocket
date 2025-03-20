@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test Client</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</script>
+</head>
+<body>
+    <h2>WebSocket Client HAproxy</h2>
+    <button onclick="connectWebSocket()">Connect</button>
+    <button onclick="disconnectWebSocket()">Disconnect</button>
+    <p id="status">Status: Not Connected</p>
+    
+    <p id="time">Connection Time: -- ms</p>
+    <p id="inst"></p>
+
+    <h2>WebSocket Client nginx</h2>
+    <button onclick="initiateWebSocket()">Connect</button>
+    <button onclick="terminateWebSocket()">Disconnect</button>
+    <p id="conn-status">Status: Not Connected</p>
+    <p id="conn-time">Connection Time: -- ms</p>
+    <p id="server-details">Waiting for server info...</p>
+    <script>
+        let socket;
+        let startTime;
+
+        function connectWebSocket() {
+            if (socket && socket.connected) {
+                alert("Already connected!");
+                return;
+            }
+
+            startTime = performance.now(); // Start timing
+            socket = io("http://localhost:80",{transports: ["websocket"]}); // Connect to WebSocket server
+
+            socket.on("connect", () => {
+                
+                const endTime = performance.now();
+                console.log("test",endTime);
+                console.log("adfadsfasf",socket);
+                document.getElementById("status").innerText = "Status: Connected ✅";
+                document.getElementById("time").innerText = `Connection Time: ${(endTime - startTime).toFixed(2)} ms`;
+
+                console.log("Connected to WebSocket");
+            });
+            socket.on("server-info", (data) => {
+            console.log("📩 Received server info:", data);
+            document.getElementById("inst").innerText = `Server Instance: ${data.instance} - ${data.message}`;
+        });
+
+            socket.on("disconnect", () => {
+                document.getElementById("status").innerText = "Status: Disconnected ❌";
+                console.log("Disconnected from WebSocket");
+            });
+
+            socket.on("connect_error", (err) => {
+                document.getElementById("status").innerText = "Status: Connection Failed ❌";
+                console.error("Connection error:", err.message);
+            });
+        }
+
+        function disconnectWebSocket() {
+            if (socket && socket.connected) {
+                socket.disconnect();
+                document.getElementById("status").innerText = "Status: Disconnected ❌";
+                document.getElementById("time").innerText = "Connection Time: -- ms";
+            } else {
+                alert("Not connected!");
+            }
+        }
+
+        let testSocket;
+        let connectionStartTime;
+
+        function initiateWebSocket() {
+            if (testSocket && testSocket.connected) {
+                alert("Already connected!");
+                return;
+            }
+
+            connectionStartTime = performance.now(); // Start timing
+            testSocket = io("http://localhost:81", { transports: ["websocket"] }); // Connect to WebSocket on port 81
+
+            testSocket.on("connect", () => {
+                const connectionEndTime = performance.now();
+                document.getElementById("conn-status").innerText = "Status: Connected ✅";
+                document.getElementById("conn-time").innerText = `Connection Time: ${(connectionEndTime - connectionStartTime).toFixed(2)} ms`;
+
+                console.log("Connected to WebSocket on port 81");
+            });
+
+            // Listen for 'server-info' event
+            testSocket.on("server-info", (data) => {
+                console.log("📩 Received server info:", data);
+                document.getElementById("server-details").innerText = `Server Instance: ${data.instance} - ${data.message}`;
+            });
+
+            testSocket.on("disconnect", () => {
+                document.getElementById("conn-status").innerText = "Status: Disconnected ❌";
+                console.log("Disconnected from WebSocket");
+            });
+
+            testSocket.on("connect_error", (err) => {
+                document.getElementById("conn-status").innerText = "Status: Connection Failed ❌";
+                console.error("Connection error:", err.message);
+            });
+        }
+
+        function terminateWebSocket() {
+            if (testSocket && testSocket.connected) {
+                testSocket.disconnect();
+                document.getElementById("conn-status").innerText = "Status: Disconnected ❌";
+                document.getElementById("conn-time").innerText = "Connection Time: -- ms";
+            } else {
+                alert("Not connected!");
+            }
+        }
+    </script>
+
+    
+</body>
+</html>

@@ -2,6 +2,7 @@ config:
   target: 'http://localhost:80'
   socketio:
     transports: [ "websocket" ]
+    ensureConnected: true
   phases:
     - duration: 60
       arrivalRate: 5
@@ -31,6 +32,6 @@ scenarios:
       - think: 1
       - emit:
           channel: "move"
-          data: "hi" 
+          data: "" 
 # variables:
 #   userIP: ["192.168.1.100","192.168.1.101","192.168.1.102","192.168.1.103"]

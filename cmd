@@ -4,3 +4,5 @@ docker run -d --name nginx --net test -v $(pwd)/nginx.conf:/etc/nginx/nginx.conf
 
 docker run -d --name redis -p 6379:6379 --net test redis/redis-stack-server:latest
 docker run -d --name redis --net test redis/redis-stack-server:latest
+
+docker run -d -p 6378:6379 --name dragon --net test --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly

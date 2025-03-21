@@ -1,5 +1,7 @@
 config:
   target: 'http://localhost:80'
+  socketio:
+    transports: [ "websocket" ]
   phases:
     - duration: 60
       arrivalRate: 5

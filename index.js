@@ -81,7 +81,7 @@ io.on("connection", (socket) => {
 
 
 // Start server on port 3000
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => console.log(`🚀 Game Server Instance ${INSTANCE_ID} running on ws://localhost:${PORT}`)
     
 );
